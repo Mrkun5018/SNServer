@@ -1,11 +1,8 @@
-from utils import Logger
 import importlib
 import os
 
 
-def auto_register_blueprint(application, b_file_name=None, ignore=None):  # 蓝图注册
-    log = Logger.getInstances()
-
+def server_blueprints(b_file_name=None, ignore=None) -> []:  # 蓝图注册
     ignore = ignore or []
     ignore.append("__pycache__")
 
@@ -22,11 +19,10 @@ def auto_register_blueprint(application, b_file_name=None, ignore=None):  # 蓝�
         if not os.path.exists(os.path.join(filepath, '__init__.py')):
             continue
 
-        log.warning(f"- auto register blueprint -> {filename}")
-        auto_blueprint = importlib.import_module(f'{b_file_name}.' + filename).__dict__[filename]
-        application.register_blueprint(auto_blueprint)
+        blueprint = importlib.import_module(f'{b_file_name}.' + filename).__dict__[filename]
+        yield filename, blueprint
 
 
-__all__ = ["auto_register_blueprint"]
+__all__ = ["server_blueprints"]
 
 

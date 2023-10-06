@@ -1,24 +1,24 @@
 from configparser import ConfigParser
-from utils import Logger
+from .config import SERVER, MYSQL, JWT, LOCAL
 
-from .config import SERVER, MYSQL, JWT
-
-
-config_section_table = {}
 config_object_table = {
     "server": SERVER,
     "mysql": MYSQL,
+    "local": LOCAL,
     "jwt": JWT
 }
 
 
 def mapping_config_object(cnf_name):
-    log = Logger.getInstances()
+
     parser = ConfigParser()
     parser.read(cnf_name)
+
+    config_section_table = {}
     for name, section in parser.items():
-        if name in config_object_table.keys():
-            config_section_table[name] = section
+        if name not in config_object_table.keys():
+            continue
+        config_section_table[name] = section
 
     for name, section in config_section_table.items():
         for field in section.keys():
@@ -34,11 +34,11 @@ def mapping_config_object(cnf_name):
             if cnf_value is None:
                 continue
 
-            log.warning(f"- load configer {name}.{field}={cnf_value}")
+            print(f" - load configer {name}.{field}={cnf_value}")
             cnf_object = config_object_table[name]
             setattr(cnf_object, field_upper, cnf_value)
 
 
 if __name__ == '__main__':
-    mapping_config_object('../app_server.ini')
+    mapping_config_object('../server.ini')
     print(JWT.KEY)

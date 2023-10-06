@@ -1,11 +1,15 @@
 class SERVER:
-    FILEPATH = './source/upload'
     VERSION = 'SUPER NOTES SERVER v1.0.1'
+    PORT = 8080
+    HOST = '127.0.0.1'
+    DEBUG = True
+
+
+class LOCAL:
+    FILEPATH = './source/upload'
     IMAGE = 'image'
     AVATAR = 'avatar'
     PICTURES = 'pictures'
-    PORT = 8080
-    DEBUG = True
 
 
 class MYSQL:

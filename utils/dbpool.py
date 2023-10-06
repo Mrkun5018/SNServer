@@ -1,12 +1,7 @@
 from dbutils.pooled_db import PooledDB
 from utils.singleton import Singleton
+from configer import MYSQL
 import pymysql
-
-MYSQL_PORT = 3306
-MYSQL_HOST = "127.0.0.1"
-MYSQL_USER = "root"
-MYSQL_PASSWORD = "root"
-MYSQL_DATABASE = "notes"
 
 
 class DatabaseConnectionPool(Singleton):
@@ -45,11 +40,21 @@ class DatabaseConnectionPool(Singleton):
         return query_result
 
 
+def initialize_database_pool():
+    DatabaseConnectionPool(
+        user=MYSQL.USERNAME,
+        password=MYSQL.PASSWORD,
+        dbname=MYSQL.DATABASE,
+        host=MYSQL.HOST,
+        port=MYSQL.PORT
+    )
+
+
 if __name__ == '__main__':
-    pool = DatabaseConnectionPool(user=MYSQL_USER, password=MYSQL_PASSWORD, dbname=MYSQL_DATABASE)
+    initialize_database_pool()
     # res = pool.fetchall('select count(*) as count from library;')
-    pool2 = DatabaseConnectionPool.getInstances()
-    print(pool == pool2)
+    pool = DatabaseConnectionPool.getInstances()
+
 # conn = pool.connection()  # 以后每次需要数据库连接就是用connection（）函数获取连接就好了
 # cur = conn.cursor()
 # SQL = "select UserID,Password from UserTable"

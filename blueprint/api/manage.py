@@ -2,7 +2,7 @@ from flask import request, Response
 
 from utils import respond_handle_wrapper
 from utils.manager import getCurrentTimeStr, attr_local_image
-from configer import SERVER
+from configer import SERVER, LOCAL
 
 from blueprint.api import api
 from lxml import etree
@@ -38,7 +38,7 @@ def upload_image():
     uploadName = upload_file.filename
     suffix = os.path.splitext(uploadName)[1]
     filename = f"{getCurrentTimeStr()}{suffix}"
-    filepath = os.path.join(SERVER.FILEPATH, SERVER.IMAGE, filename)
+    filepath = os.path.join(LOCAL.FILEPATH, LOCAL.IMAGE, filename)
     upload_file.save(filepath)
     return {'url': f"image/{filename}"}
 
@@ -46,10 +46,10 @@ def upload_image():
 @api.route("<string:typeof>/<string:name>")
 @respond_handle_wrapper
 def query_image(typeof, name):
-    typeof_map = {'image': SERVER.IMAGE, 'avatar': SERVER.AVATAR, 'pictures': SERVER.PICTURES}
+    typeof_map = {'image': LOCAL.IMAGE, 'avatar': LOCAL.AVATAR, 'pictures': LOCAL.PICTURES}
     image_path = typeof_map.get(typeof, None)
     if image_path is not None:
-        filebytes = attr_local_image(os.path.join(SERVER.FILEPATH, image_path), name)
+        filebytes = attr_local_image(os.path.join(LOCAL.FILEPATH, image_path), name)
         return Response(filebytes, mimetype='image/jpeg')
     return None
 

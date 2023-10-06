@@ -1,28 +1,27 @@
 # SNServer
 > #### SUPER NOTES SERVER
-- ### build linux environment
+
+### virtualenv build environment
 
   ```shell
-  ./build_environment.sh
+  pip install virtualenv
+  virtualenv venv
+  source venv/bin/activate
+  pip3 install -r ./requirements.txt -i https://pypi.mirrors.ustc.edu.cn/simple/ --target=./venv/Lib/site-packages
   ```
 
-- ### build windows environment
+### Run in a production environment
 
   ```shell
-    ./build_environment.bat
+  flask run
   ```
 
-- ### Run Project By Linux
+---
 
-  ```shell
-  ./start_server.sh
-  ```
-  
-- ### Run Project By Windows
-
-  ```shell
-  ./start_server.bat
-  ```
+### 主要功能
+ 
+ - 笔记增删改查
+ - websocks实时聊天室
 
 
 

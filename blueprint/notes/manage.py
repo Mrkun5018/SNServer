@@ -1,6 +1,7 @@
 from flask import request
 from blueprint.notes import notes
-from utils import respond_handle_wrapper, datetimeFormatString, DatabaseConnectionPool
+from utils import respond_handle_wrapper, datetimeFormatString
+from utils.dbpool import DatabaseConnectionPool
 
 dbpool = DatabaseConnectionPool.getInstances()
 
@@ -41,6 +42,15 @@ def query_notes_tags():
 @notes.route('/tags', methods=['GET'])
 @respond_handle_wrapper
 def query_tags():
+    md5 = request.args.get('md5', None)
+    sql = f"select {record_fields} from record where md5={md5}"
+    res = dbpool.fetchone(sql)
+    return res
+
+
+@notes.route('/tags/count', methods=['GET'])
+@respond_handle_wrapper
+def query_count_tags():
     tag_dict = {}
     tags = dbpool.fetchall(query_notes_tags())
     tag_list = ','.join(map(lambda items: items['tags'], tags)).split(',')
