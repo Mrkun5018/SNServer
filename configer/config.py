@@ -3,6 +3,7 @@ class SERVER:
     PORT = 8080
     HOST = '127.0.0.1'
     DEBUG = True
+    ENVIRONMENT = "production"        # production or development
 
 
 class LOCAL:

@@ -15,23 +15,22 @@ class IDGenerator(object):
     def __init__(self, *args):
         self.hashset = set(args)
         self.fields = ('author', 'content')
-        self.params = {}
-
-    def setParams(self, **params: {str: str}):
-        for key, val in params.items():
-            if key in self.fields:
-                self.params[key] = val
 
     def checkHashcode(self, code):
         return code not in self.hashset
 
-    def generate(self):
-        params = ','.join(self.params.values())
-        idcode = str(uuid.uuid3(uuid.NAMESPACE_DNS, params)).replace('-', '')
-        if self.checkHashcode(idcode):
-            self.hashset.add(idcode)
-            return idcode
-        return None
+    @staticmethod
+    def __generate_idcode(params=None):
+        params = list(params) or []
+        params.append(str(time.time()))
+        uid = uuid.uuid3(uuid.NAMESPACE_DNS, ','.join(params))
+        return str(uid).replace('-', '')
+
+    def generate(self, *args):
+        while idcode := IDGenerator.__generate_idcode(args):
+            if self.checkHashcode(idcode):
+                self.hashset.add(idcode)
+                return idcode
 
 
 def getCurrentTimeStr(fmt: str = None) -> str:
@@ -51,12 +50,11 @@ def loadJsonFile(filepath: str) -> dict:
 
 
 def remove_special_characters(char: str) -> [str]:
-    if len(char):
+    split_result = []
+    if len(char) > 0:
         pattern = '[’!"\\#$%&\'()＃！，。/（）*+,:;<=>?\\@：?￥★、…＞【】［］『』《》？「」“”‘’\\[\\]^`{|}~\\u4e00 \\u9fa5]+'
         remove_result = re.sub(pattern, ' ', char)
         split_result: [str] = ' '.join(remove_result.split()).split(' ')
-    else:
-        split_result = []
     return split_result
 
 

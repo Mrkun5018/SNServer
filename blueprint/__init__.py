@@ -1,8 +1,13 @@
+from flask import Flask
+import flask_cors
 import importlib
 import os
 
+from utils import jwt_authentication
+from configer import Configer
 
-def server_blueprints(b_file_name=None, ignore=None) -> []:  # 蓝图注册
+
+def auto_import_blueprints(b_file_name=None, ignore=None) -> []:  # 蓝图注册
     ignore = ignore or []
     ignore.append("__pycache__")
 
@@ -23,6 +28,28 @@ def server_blueprints(b_file_name=None, ignore=None) -> []:  # 蓝图注册
         yield filename, blueprint
 
 
-__all__ = ["server_blueprints"]
+def create_app_service() -> Flask:
+    application = Flask(__name__, static_folder='./source', static_url_path='/source')
+
+    flask_cors.CORS(application)
+
+    for filename, blueprint in auto_import_blueprints(b_file_name='blueprint', ignore=['admin']):
+        print(f" * register blueprint => {filename}")
+        application.register_blueprint(blueprint)
+
+    application.config.from_object(Configer)
+
+    application.before_request(jwt_authentication)
+
+    application.add_url_rule('/', 'index', index)
+
+    return application
+
+
+def index():
+    return "<h1 align='center'>super　notes　server</h1>"
+
+
+__all__ = ["create_app_service"]
 
 
